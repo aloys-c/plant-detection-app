@@ -1,7 +1,8 @@
 {
   "expo": {
-    "name": "my-app",
-    "slug": "my-app",
+    "name": "tree-counting-app",
+    "slug": "app",
+    "owner": "aloys_c",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -18,16 +19,23 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "iosapp"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.aloys_c.app"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "adbe5ea6-1621-448b-b0c1-46a500ee811d"
+      }
     }
   }
 }

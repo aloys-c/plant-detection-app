@@ -1,16 +1,17 @@
-import { StatusBar } from 'expo-status-bar';
-import { Component } from 'react';
-import { StyleSheet, Text, View, Button, Alert, TextInput } from 'react-native';
+import { useContext} from 'react';
+import { Text, View, Pressable, Alert, TextInput } from 'react-native';
 import styles from "../Style.js"
+import {authContext} from "./Navigator.js"
 
-export default class Login extends Component{
-  render() {
+export default function Login({navigation}){
+const {isAuth, setIsAuth} = useContext(authContext);
+
     return (
-    <View>
+    <View style={styles.container}>
       <Text style = {{textAlign:"center", fontSize:40 }}> Login </Text>
       <View>
         <TextInput 
-          placeholder="Email" 
+          placeholder="Email"  
           style={styles.input}
           />
           
@@ -19,15 +20,16 @@ export default class Login extends Component{
           secureTextEntry={true}
           placeholder="Password"
         />
-        <Button
-          onPress={() => Alert.alert("Login !")}
-          title="Login"
+        <Pressable
+          onPress={() => {setIsAuth(true)}}
           accessibilityLabel="Connect button"
-        />
+        >
+          <Text style = {styles.pressButton}>Login</Text>
+          </Pressable>
         
       </View>
     </View>)
-  }
+
 }
 
 
