@@ -1,19 +1,22 @@
 import {NavigationContainer} from "@react-navigation/native";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Component,createContext } from 'react';
-import { Alert } from "react-native";
+import { Component} from 'react';
+import { authContext} from "./global.js";
 import Login from "./Login.js";
+import Register from "./Register.js"
 import Start from "./Start.js";
+import Result from "./Result.js";
+import Toast from 'react-native-toast-message';
 
 const Stack = createNativeStackNavigator();
-export const authContext = createContext();
+
 
 export default class Navigator extends Component{
     
         constructor(){
           super()
           this.state = {
-            isAuth: false
+            isAuth: "user0"
           };
         }
        
@@ -34,11 +37,21 @@ export default class Navigator extends Component{
 
             {this.state.isAuth ? (
             <>
-                <Stack.Screen name="Start" component={Start} />
+                <Stack.Screen name="Start" component={Start} options={{title:"",headerStyle: {
+            backgroundColor: 'green',
+          },headerTintColor: '#fff'}}/>
+                <Stack.Screen name="Result" component={Result} options={{title:"",headerStyle: {
+            backgroundColor: 'green',
+          },headerTintColor: '#fff'}} />
             </>
             ) : (
             <>  
-                <Stack.Screen name="Login" component={Login}/>
+                <Stack.Screen name="Login" component={Login} options={{animationTypeForReplace: 'pop',title:"",headerStyle: {
+            backgroundColor: 'green',
+          },headerTintColor: '#fff'}}/>
+                <Stack.Screen name="Register" component={Register} options={{animationTypeForReplace: 'pop',title:"",headerStyle: {
+            backgroundColor: 'green',
+          },headerTintColor: '#fff'}}/>
             </>
             )
             }
@@ -47,7 +60,11 @@ export default class Navigator extends Component{
             
         </Stack.Navigator>
       </NavigationContainer>
+      <>
+      <Toast />
+       </>
       </authContext.Provider>
+      
   );
   
     }
