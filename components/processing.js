@@ -1,6 +1,8 @@
 import * as Location from 'expo-location'
 import {getDownloadURL, getStorage,ref,uploadBytes} from "firebase/storage";
 import { collection, addDoc, getFirestore, getDocs } from "firebase/firestore"; 
+import * as FileSystem from 'expo-file-system'
+import Toast  from 'react-native-toast-message';
 
 
 
@@ -97,18 +99,8 @@ export async function readFromFirebase(coll){
     return getDownloadURL(storageRef)
   } 
 
-  export async function detectPlant(imURL,organ){
-    let Url = 'https://my-api.plantnet.org/v2/identify/all?api-key=2b10MMxKgs5SPRsf4ENGAXzku'
-    let request = Url+"&images="+imURL.slice(0,imURL.lastIndexOf('&'))+"&organs="+organ
-    return fetch(request).then((response) => {if(!response.ok) {
-      return response.json().then((json) => {return {error:json.message}})
-      } else {return response.json().then((json) => {
-        let result = json.results[0]
-        console.log("PlantData retrieved.")
-        return {error: false,result:{name:result.species.scientificNameWithoutAuthor,score:result.score}}})} }).catch((e)=>{return {error:"API error"}})
-    }
 
-    export const getCurrentLocation = async () => {
+  const getCurrentLocation = async () => {
         let { status } = await Location.requestForegroundPermissionsAsync();
       
         if (status !== 'granted') {
@@ -136,3 +128,67 @@ export async function readFromFirebase(coll){
       
         }
       }
+
+      
+    
+      async function detectPlantLocal(image)
+      {
+        let body = new FormData();
+        let Url = 'https://my-api.plantnet.org/v2/identify/all?api-key=2b10MMxKgs5SPRsf4ENGAXzku'
+        body.append('organs', image.organ);
+        body.append('images', {uri: image.uri.replace('file://', ''),type: 'image/jpeg'});
+        
+        try {
+          const response = await FileSystem.uploadAsync(
+            Url,
+            image.uri,
+            {
+              headers : {"Content-Type": "multipart/form-data"},
+              fieldName: "images",
+              httpMethod: "POST",
+              uploadType: FileSystem.FileSystemUploadType.MULTIPART,
+              parameters: {"organs":image.organ}
+            }
+          )
+          parsed = JSON.parse(response.body)
+          if(parsed.statusCode)
+          {
+            return {error:true,message:parsed.message}
+          }else
+          {
+            result = parsed.results[0]
+            console.log("Plant data retrieved.")
+            return {error: false,result:{name:result.species.scientificNameWithoutAuthor,score:result.score}}
+          }
+          
+        } catch(error) {
+          console.log(error)
+          return {error:true,message:"Process error"}
+        }  
+  }
+
+
+   export async function process_image(image,navigation){
+      
+      return Promise.all([getCurrentLocation(),detectPlantLocal(image)]).then(result => {
+        if(result[1].error)
+        {
+          Toast.show({
+            type: 'error',
+            text1: result[1].message,
+            visibilityTime:2000,
+          });
+          return 0;
+        }
+        else
+        {
+          return {...result[1].result,...result[0].result};
+        }
+      })
+   }
+      
+     
+   
+   
+   
+   

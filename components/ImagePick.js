@@ -4,6 +4,7 @@ import styles from "../Style.js"
 import {authContext} from "./global"
 import * as ImagePicker from 'expo-image-picker';
 import SwitchSelector from "react-native-switch-selector";
+import { process_image } from './processing.js';
 
 
 
@@ -11,12 +12,15 @@ import SwitchSelector from "react-native-switch-selector";
 
 
 
-export default class Start extends Component{
+export default class ImagePick extends Component{
 
+constructor(props){
+  super(props)
 
-  state = {
+  this.state = {
     organ: "flower",
   }
+ }
 
   static contextType = authContext
     
@@ -29,7 +33,14 @@ export default class Start extends Component{
     });
   
     if (!result.cancelled) {
-      this.props.navigation.navigate("Result", {imageURI:result.uri,organ:this.state.organ})
+      this.props.startProcessing()
+      process_image({uri:result.uri,organ:this.state.organ},this.props.navigation).then((data)=>{
+        this.props.stopProcessing()
+        console.log(data)
+        if(data)
+          this.props.navigation.navigate("Edit",{data:data,uri:result.uri})
+      })
+      
     }
   };
 
@@ -51,17 +62,17 @@ export default class Start extends Component{
   
   
     if (!result.cancelled) {
-      this.props.navigation.navigate("Result", {imageURI:result.uri, organ:this.state.organ})
+      
+      process_image({uri:result.uri, organ:this.state.organ},this.props.navigation)
     }
   
   }
   
   render(){
   return (
-    <View style={styles.container}>
-      <Text style = {{textAlign:"center", fontSize:40 }}>  </Text>
+    <View>
       <View>
-      <SwitchSelector style = {{borderWidth:1,borderColor:"green",borderRadius:10,}}
+      <SwitchSelector style = {{width:240,borderWidth:1,borderColor:"green",borderRadius:10,}}
       options={[
         { label: "Flower", value: "flower", testID: "flower", accessibilityLabel: "Flower" },
         { label: "Leaf", value: "leaf", testID: "leaf", accessibilityLabel: "Leaf" },]}

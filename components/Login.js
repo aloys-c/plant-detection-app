@@ -1,4 +1,4 @@
-import { useContext,useState, Component} from 'react';
+import { Component} from 'react';
 import { Text, View, Pressable, TextInput} from 'react-native';
 import styles from "../Style.js"
 import {authContext} from "./global.js"

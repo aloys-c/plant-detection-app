@@ -1,11 +1,12 @@
 import {NavigationContainer} from "@react-navigation/native";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Component} from 'react';
+import { Button, Pressable, Alert, Text } from "react-native";
 import { authContext} from "./global.js";
 import Login from "./Login.js";
 import Register from "./Register.js"
-import Start from "./Start.js";
-import Result from "./Result.js";
+import Home from "./Home.js";
+import Edit from "./Edit.js";
 import Toast from 'react-native-toast-message';
 
 const Stack = createNativeStackNavigator();
@@ -37,10 +38,8 @@ export default class Navigator extends Component{
 
             {this.state.isAuth ? (
             <>
-                <Stack.Screen name="Start" component={Start} options={{title:"",headerStyle: {
-            backgroundColor: 'green',
-          },headerTintColor: '#fff'}}/>
-                <Stack.Screen name="Result" component={Result} options={{title:"",headerStyle: {
+                <Stack.Screen name="Home" component={Home} />
+                <Stack.Screen name="Edit" component={Edit} options={{title:"",headerStyle: {
             backgroundColor: 'green',
           },headerTintColor: '#fff'}} />
             </>
