@@ -38,18 +38,20 @@ export default class Navigator extends Component{
 
             {this.state.isAuth ? (
             <>
-                <Stack.Screen name="Home" component={Home} />
+                <Stack.Screen name="Home" component={Home} options={{title:"",headerStyle: {
+            backgroundColor: '#009432',
+          },headerTintColor: '#fff'}} />
                 <Stack.Screen name="Edit" component={Edit} options={{title:"",headerStyle: {
-            backgroundColor: 'green',
+            backgroundColor: '#009432',
           },headerTintColor: '#fff'}} />
             </>
             ) : (
             <>  
                 <Stack.Screen name="Login" component={Login} options={{animationTypeForReplace: 'pop',title:"",headerStyle: {
-            backgroundColor: 'green',
+            backgroundColor: '#009432',
           },headerTintColor: '#fff'}}/>
                 <Stack.Screen name="Register" component={Register} options={{animationTypeForReplace: 'pop',title:"",headerStyle: {
-            backgroundColor: 'green',
+            backgroundColor: '#009432',
           },headerTintColor: '#fff'}}/>
             </>
             )

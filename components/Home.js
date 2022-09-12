@@ -8,7 +8,6 @@ import { getImageURL, readFromFirebase,randomStr} from "./processing.js"
 import { useFocusEffect } from '@react-navigation/native';
 
 
-
 export default class Home extends Component{
 
   static contextType = authContext;
@@ -17,12 +16,13 @@ export default class Home extends Component{
         super(props)
 
         this.state = {
-            data: [],
+            user_data: [],
             modal_open:false,
             cog:false,
+            render:false,
           }
 
-        this.props.navigation.setOptions({title:"",headerRight: () => (
+        this.props.navigation.setOptions({headerRight: () => (
             <Pressable
             style = {{width:20,height:20,alignItems:"center",justifyContent:"center"}}
               onPress={() => {this.updateState("modal_open",true);
@@ -31,21 +31,14 @@ export default class Home extends Component{
             >
               <Text style = {{color:"white",fontSize:20,fontWeight:"bold"}}>+</Text>
             </Pressable>
-          ),headerStyle: {
-          backgroundColor: 'green',
-        },headerTintColor: '#fff'})
+          )})
     }
     
-    toggleProcessing(state){
-      if(state){
-        
-      }
-    }
 
-    /*async componentDidMount() {
-        const data = await this.getUserData();
-        this.setState({data});
-      }*/
+    async componentDidMount() {
+        const user_data = await this.getUserData();
+        this.setState({user_data});
+      }
 
     updateState(key,value){
         sub_obj={}
@@ -58,24 +51,24 @@ export default class Home extends Component{
         
         user = this.context.isAuth;
         return readFromFirebase("plants").then(plants =>{
-            temp = []
+            userData = []
             plants.forEach(doc => {
                 
                 if(doc.data().maker == user)
                 {
-                    temp.push(doc.data())
+                    userData.push({data:doc.data(),location:{"id":doc.id}})
                 }
             })
             
             urls = []
-            for(i=0;i<temp.length;i++){
-                urls.push(getImageURL(temp[i].picturePath))
+            for(i=0;i<userData.length;i++){
+                urls.push(getImageURL(userData[i].data.picturePath))
             }
             return Promise.all(urls).then((urls) =>{
-                for(i=0;i<temp.length;i++){
-                    temp[i].imURL = urls[i]
+                for(i=0;i<userData.length;i++){
+                    userData[i].location.uri = urls[i]
                 }
-                return temp
+                return userData
             })   
         })
     }  
@@ -86,15 +79,14 @@ export default class Home extends Component{
    
 
     render(){
-      
-        if(!this.state.data){
+        if(!this.state.user_data){
            
         }
         else{ 
         return(
-        <View style ={{marginTop:-30}}>
+        <View style={styles.container}>
           {this.state.modal_open &&
-            <View style={{backgroundColor:'rgba(0, 0, 0, 0.8)',width:Dimensions.get("screen").width,height:Dimensions.get("screen").height,marginTop:-30}}></View>
+            <View style={{backgroundColor:'rgba(0, 0, 0, 0.8)',width:Dimensions.get("screen").width,height:Dimensions.get("screen").height}}></View>
           }
           <Modal
           animationType="slide"
@@ -103,8 +95,8 @@ export default class Home extends Component{
           
         >  
           
-            <View style={{width:Dimensions.get('window').width-40,marginLeft:20,marginBottom:180,marginTop:100, backgroundColor:"white",borderColor:"green", borderWidth:2,borderRadius:20}}>
-            <Pressable style={{justifyContent:"center",alignContent:"center", alignItems:"center", width:20,height:20,borderRadius:20,backgroundColor:"green",margin:10}}
+            <View style={{width:Dimensions.get('window').width-40,marginLeft:20,marginBottom:180,marginTop:100, backgroundColor:"white",borderColor:"green", borderWidth:1,borderRadius:5}}>
+            <Pressable style={{justifyContent:"center",alignContent:"center", alignItems:"center", width:20,height:20,borderRadius:20,backgroundColor:"black",margin:10}}
                 onPress={() => {this.updateState("modal_open",false)
                 this.props.navigation.setOptions({headerRight
                 : () => (
@@ -141,26 +133,26 @@ export default class Home extends Component{
           </View>
            
         </Modal>
-        {false &&
+        {true &&
         <FlatList
             numColumns={3}
-          data={this.state.data}
+          data={this.state.user_data}
           style ={styles.grid}
           showsVerticalScrollIndicator={true}
           renderItem={({item}) =>
           <View >
-            <Pressable onPress={()=> Alert.alert("pressed")}>
+            <Pressable onPress={()=> this.props.navigation.navigate("Edit",{data:item.data,location:item.location,mode:"edit"})}>
             <Image
             
         style = {styles.gridImage}
         source={{
-            uri: item.imURL}} />
+            uri: item.location.uri}} />
         
             </Pressable>
           </View>
           
           }
-          keyExtractor={item => item.imagePath}
+          keyExtractor={item => item.location.id}
         />}
         {this.state.cog &&
         <View style={styles.container}>

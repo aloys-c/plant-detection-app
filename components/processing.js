@@ -1,6 +1,6 @@
 import * as Location from 'expo-location'
 import {getDownloadURL, getStorage,ref,uploadBytes} from "firebase/storage";
-import { collection, addDoc, getFirestore, getDocs } from "firebase/firestore"; 
+import { collection, addDoc,updateDoc, getFirestore, getDocs, doc } from "firebase/firestore"; 
 import * as FileSystem from 'expo-file-system'
 import Toast  from 'react-native-toast-message';
 
@@ -32,7 +32,9 @@ export const uriToBlob = (uri) => {
 
   }
 
-  export const uploadToFirebase = (blob,file) => {
+  export const uploadToFirebase = (uri,file) => {
+
+    return uriToBlob(uri).then((blob)=>{
 
     return new Promise((resolve, reject)=>{
       const storage = getStorage();
@@ -51,15 +53,14 @@ export const uriToBlob = (uri) => {
       });
 
     });
+    })
   }   
 
   export async function writeToFirebase(coll,doc){
     const db = getFirestore();
 
     try {
-        const docRef = await addDoc(collection(db, coll), 
-        doc
-        );
+        const docRef = await addDoc(collection(db, coll), doc);
         console.log("Document written with ID: ", docRef.id);
         return docRef.id
       } catch (e) {
@@ -67,6 +68,21 @@ export const uriToBlob = (uri) => {
         return 0
       }
   }
+
+
+  export async function updateInFirebase(coll,id,document){
+    const db = getFirestore();
+
+    try {
+      return updateDoc(doc(db,coll,id), document).then(()=>{console.log("Document updated !"); return true});
+      } catch (e) {
+        console.error("Error updating document: ", e);
+        return 0
+      }
+  }
+
+
+
 
 export function updateObject(obj,key,value){
     obj.key = value

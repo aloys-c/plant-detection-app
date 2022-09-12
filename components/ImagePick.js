@@ -38,7 +38,7 @@ constructor(props){
         this.props.stopProcessing()
         console.log(data)
         if(data)
-          this.props.navigation.navigate("Edit",{data:data,uri:result.uri})
+          this.props.navigation.navigate("Edit",{data:data,location:{uri:result.uri},mode:"new"})
       })
       
     }
@@ -62,8 +62,13 @@ constructor(props){
   
   
     if (!result.cancelled) {
+      this.props.startProcessing()
+      process_image({uri:result.uri,organ:this.state.organ},this.props.navigation).then((data)=>{
+        this.props.stopProcessing()
+        if(data)
+          this.props.navigation.navigate("Edit",{data:data,location:{uri:result.uri},mode:"new"})
+      })
       
-      process_image({uri:result.uri, organ:this.state.organ},this.props.navigation)
     }
   
   }
@@ -72,14 +77,14 @@ constructor(props){
   return (
     <View>
       <View>
-      <SwitchSelector style = {{width:240,borderWidth:1,borderColor:"green",borderRadius:10,}}
+      <SwitchSelector style = {{width:240,borderWidth:1,borderColor:"#009432",borderRadius:5,}}
       options={[
         { label: "Flower", value: "flower", testID: "flower", accessibilityLabel: "Flower" },
         { label: "Leaf", value: "leaf", testID: "leaf", accessibilityLabel: "Leaf" },]}
       initial={0}
-      buttonColor={"green"}
-  borderColor={"green"}
-  borderRadius ={10}
+      buttonColor={"#009432"}
+  borderColor={"#009432"}
+  borderRadius ={5}
   bold = {true}
   width = {30}
       onPress={value => this.state.organ = value}
@@ -93,7 +98,7 @@ constructor(props){
         </Pressable>
         
         <Pressable onPress={() => {this.context.setIsAuth(false)}}>
-          <Text style = {[styles.pressButton,{marginTop:80,backgroundColor:"darkred"}]}>Logout</Text>
+          <Text style = {[styles.pressButton,{marginTop:80,backgroundColor:"#BE3514"}]}>Logout</Text>
         </Pressable>
         
       </View>
