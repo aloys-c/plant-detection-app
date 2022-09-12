@@ -1,11 +1,11 @@
 import React,{Component} from 'react';
-import { View , Image,Text,Modal,FlatList, Alert,Pressable,Dimensions,ActivityIndicator} from 'react-native';
-import { authContext } from './global';
+import { View , Image,Text,Modal,FlatList,Pressable,Dimensions,ActivityIndicator} from 'react-native';
+import { authContext } from '../global';
 import CustomFastImage from './CustomFastImage';
 import styles from "../Style.js"
 import ImagePick from "./ImagePick.js"
-import { getImageURL, readFromFirebase,randomStr} from "./processing.js"
-import { useFocusEffect } from '@react-navigation/native';
+import { getImageURL, readFromFirebase} from "./processing.js"
+import ImageLoader from './ImageLoader.js';
 
 
 export default class Home extends Component{
@@ -19,7 +19,6 @@ export default class Home extends Component{
             user_data: [],
             modal_open:false,
             cog:false,
-            render:false,
           }
 
         this.props.navigation.setOptions({headerRight: () => (
@@ -35,10 +34,11 @@ export default class Home extends Component{
     }
     
 
-    async componentDidMount() {
+    async update_data() {
         const user_data = await this.getUserData();
         this.setState({user_data});
-      }
+    }
+
 
     updateState(key,value){
         sub_obj={}
@@ -79,10 +79,8 @@ export default class Home extends Component{
    
 
     render(){
-        if(!this.state.user_data){
-           
-        }
-        else{ 
+      this.update_data()
+      
         return(
         <View style={styles.container}>
           {this.state.modal_open &&
@@ -135,18 +133,18 @@ export default class Home extends Component{
         </Modal>
         {true &&
         <FlatList
-            numColumns={3}
+          numColumns={3}
           data={this.state.user_data}
           style ={styles.grid}
           showsVerticalScrollIndicator={true}
           renderItem={({item}) =>
           <View >
             <Pressable onPress={()=> this.props.navigation.navigate("Edit",{data:item.data,location:item.location,mode:"edit"})}>
-            <Image
+            <ImageLoader
             
-        style = {styles.gridImage}
-        source={{
-            uri: item.location.uri}} />
+              style = {styles.gridImage}
+              source={{
+                uri: item.location.uri}} />
         
             </Pressable>
           </View>
@@ -155,8 +153,8 @@ export default class Home extends Component{
           keyExtractor={item => item.location.id}
         />}
         {this.state.cog &&
-        <View style={styles.container}>
-        <View style={{width:100,height:100,backgroundColor:"'rgba(0, 0, 0, 0.8)'",justifyContent:"center",borderRadius:20,marginTop:400}}>
+        <View style={[styles.container,{backgroundColor:"transparent",position:"absolute"}]}>
+        <View style={{width:100,height:100,backgroundColor:"'rgba(0, 0, 0, 0.8)'",justifyContent:"center",borderRadius:20}}>
           <ActivityIndicator size="large" color="white" />
           
         </View>
@@ -164,7 +162,7 @@ export default class Home extends Component{
         </View>
         
         )
-    }
+    
     }
     
 }
