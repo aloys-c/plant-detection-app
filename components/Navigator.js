@@ -24,7 +24,7 @@ export default class Navigator extends Component{
 
     getData("session").then(session =>{
       if(session && session.isAuth){
-        this.setIsAuth(true)
+        this.setIsAuth(session.isAuth)
       }
     })
   }
@@ -47,10 +47,10 @@ export default class Navigator extends Component{
 
           {this.state.isAuth ? (
           <>
-              <Stack.Screen name="Home" component={Home} options={{title:"",headerStyle: {
+              <Stack.Screen name="Home" component={Home} options={{title:"Gallery",headerStyle: {
           backgroundColor: constants.GREEN,
         },headerTintColor: '#fff'}} />
-              <Stack.Screen name="Edit" component={Edit} options={{title:"",headerStyle: {
+              <Stack.Screen name="Edit" component={Edit} options={{title:"Edit",headerStyle: {
           backgroundColor: constants.GREEN,
         },headerTintColor: '#fff'}} />
           </>

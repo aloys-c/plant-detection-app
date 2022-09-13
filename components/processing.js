@@ -18,7 +18,7 @@ import {
 import * as FileSystem from 'expo-file-system'
 import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {manipulateAsync, SaveFormat} from 'expo-image-manipulator';
+import {manipulateAsync} from 'expo-image-manipulator';
 
 
 export const uriToBlob = (uri) => {

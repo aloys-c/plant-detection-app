@@ -68,7 +68,7 @@ export default class ImagePick extends Component {
             aspect: [
                 1, 1
             ],
-            quality: 1
+            quality: constants.CAMERA_QUALITY
         });
 
 
@@ -79,14 +79,17 @@ export default class ImagePick extends Component {
                 organ: this.state.organ
             }, this.props.navigation).then((data) => {
                 this.props.stopProcessing()
-                if (data) 
-                    this.props.navigation.navigate("Edit", {
-                        data: data,
-                        location: {
-                            uri: result.uri
-                        },
-                        mode: "new"
+                if (data) {
+                    compress_image(result.uri, constants.IMAGE_SIZE, constants.COMPRESSION_FACTOR).then((res) => {
+                        this.props.navigation.navigate("Edit", {
+                            data: data,
+                            location: {
+                                uri: res.uri
+                            },
+                            mode: "new"
+                        })
                     })
+                }
 
 
                 
@@ -163,19 +166,16 @@ export default class ImagePick extends Component {
                         }>Import picture</Text>
                     </Pressable>
 
-                    <Pressable onPress={
-                        () => {
-                            this.context.setIsAuth(false)
-                        }
-                    }>
-                        <Text style={
-                            [
-                                styles.pressButton, {
-                                    marginTop: 80,
-                                    backgroundColor: constants.RED
-                                }
-                            ]
-                        }>Logout</Text>
+                    <Pressable 
+                    style={{
+                                marginTop: 80,
+                            }
+                    }
+                    
+                    onPress={() => {this.context.setIsAuth(false)}}
+                    
+                    >
+                        <Text style = {[styles.pressButton,{backgroundColor: constants.RED}]}>Logout</Text>
                     </Pressable>
 
                 </View>

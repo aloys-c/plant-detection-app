@@ -20,19 +20,13 @@ export default class Home extends Component{
             modal_open:false,
             cog:false,
           }
-
-        this.props.navigation.setOptions({headerRight: () => (
-            <Pressable
-            style = {{width:20,height:20,alignItems:"center",justifyContent:"center"}}
-              onPress={() => {this.updateState("modal_open",true);
-              this.props.navigation.setOptions({headerRight:null,});}}
-              
-            >
-              <Text style = {{color:"white",fontSize:20,fontWeight:"bold"}}>+</Text>
-            </Pressable>
-          )})
     }
     
+
+
+    componentDidMount(){
+      this.toggleModal(false)
+    }
 
     async update_data() {
         const user_data = await this.getUserData();
@@ -46,6 +40,39 @@ export default class Home extends Component{
         this.setState({...this.state,...sub_obj})
       
     }
+
+    toggleModal(state){
+      if(!state)
+      { 
+      this.updateState("modal_open",false)
+      this.props.navigation.setOptions({headerRight: () => (
+        <Pressable
+        style = {{width:20,height:20,alignItems:"center",justifyContent:"center"}}
+          onPress={() => {this.updateState("modal_open",true);
+          this.props.navigation.setOptions({headerRight:null,});}}
+          
+        >
+          <Text style = {{color:"white",fontSize:20,fontWeight:"bold"}}>+</Text>
+        </Pressable>
+      )})}
+      else
+      {
+        this.updateState("modal_open",false)
+        this.props.navigation.setOptions({headerRight
+                : () => (
+                        <Pressable
+                        style = {{width:20,height:20,alignItems:"center",justifyContent:"center"}}
+                          onPress={() => {this.updateState("modal_open",true);
+                          this.props.navigation.setOptions({headerRight
+                            : null})
+                        }}
+                        >
+                          <Text style = {{color:"white",fontSize:20,fontWeight:"bold"}}>+</Text>
+                        </Pressable>
+                      ),})
+      }
+    }
+    
 
     async getUserData(){
         
@@ -83,9 +110,8 @@ export default class Home extends Component{
       
         return(
         <View style={styles.container}>
-          {this.state.modal_open &&
-            <View style={{backgroundColor:'rgba(0, 0, 0, 0.8)',width:Dimensions.get("screen").width,height:Dimensions.get("screen").height}}></View>
-          }
+          
+          
           <Modal
           animationType="slide"
           transparent={true}
@@ -93,44 +119,33 @@ export default class Home extends Component{
           
         >  
           
+            
             <View style={{width:Dimensions.get('window').width-40,marginLeft:20,marginBottom:180,marginTop:100, backgroundColor:"white",borderColor:"green", borderWidth:1,borderRadius:5}}>
+            
             <Pressable style={{justifyContent:"center",alignContent:"center", alignItems:"center", width:20,height:20,borderRadius:20,backgroundColor:"black",margin:10}}
-                onPress={() => {this.updateState("modal_open",false)
-                this.props.navigation.setOptions({headerRight
-                : () => (
-                        <Pressable
-                        style = {{width:20,height:20,alignItems:"center",justifyContent:"center"}}
-                          onPress={() => {this.updateState("modal_open",true);
-                          this.props.navigation.setOptions({headerRight
-                            : null})
-                        }}
-                        >
-                          <Text style = {{color:"white",fontSize:20,fontWeight:"bold"}}>+</Text>
-                        </Pressable>
-                      ),})}}
+                onPress={() => {this.toggleModal(false)}}
               >
                 <Text style={{color:"white",fontWeight:"bold"}}>x</Text>
               </Pressable>
             
             <View style = {{alignItems:"center", marginBottom:30, marginTop:0}}>
             
-                <ImagePick stopProcessing = {()=>{this.updateState("cog",false)}} startProcessing = {() => {this.updateState("cog",true);this.updateState("modal_open",false)
-                this.props.navigation.setOptions({headerRight
-                : () => (
-                        <Pressable
-                        style = {{width:20,height:20,alignItems:"center",justifyContent:"center"}}
-                          onPress={() => {this.updateState("modal_open",true);
-                          this.props.navigation.setOptions({headerRight
-                            : null})
-                        }}
-                        >
-                          <Text style = {{color:"white",fontSize:20,fontWeight:"bold"}}>+</Text>
-                        </Pressable>
-                      ),})}} navigation={this.props.navigation}/>
+                <ImagePick stopProcessing = {()=>{this.updateState("cog",false)}} startProcessing = {() => {this.updateState("cog",true);this.toggleModal(false)
+                }} navigation={this.props.navigation}/>
             </View>
+            
           </View>
+       
+
+        
+          
            
         </Modal>
+        {this.state.modal_open &&
+          
+          <View style={{backgroundColor:'rgba(0, 0, 0, 0.8)',width:Dimensions.get("screen").width,height:Dimensions.get("screen").height}}></View>
+        
+        }
         {true &&
         <FlatList
           numColumns={3}
